@@ -3,7 +3,7 @@
 """
 Simple Markov chain text generator written in Python 3. (Tested on 3.5.2)
 
-    usage: mcv.py [-h] [-i words] [-l number] [-n number] [-s] [-c] [file]
+    usage: mcg.py [-h] [-i words] [-l number] [-n number] [-s] [-c] [file]
 
     Create similar texts using Markov processes.
 
@@ -57,17 +57,6 @@ def positive(value):
             value))
 
     return ivalue
-
-class FormatPrinter(pprint.PrettyPrinter):
-    def __init__(self, formats):
-        super().__init__()
-        self.formats = formats
-
-    def format(self, obj, ctx, maxlvl, lvl):
-        if type(obj) in self.formats:
-            return self.formats[type(obj)] % obj, 1, 0
-
-        return pprint.PrettyPrinter.format(self, obj, ctx, maxlvl, lvl)
 
 class Chain(object):
     def __init__(self, source, order, cyclic=False):
@@ -234,6 +223,7 @@ def main():
             for line in f:
                 source += line
     except KeyboardInterrupt:
+        # Handle Ctrl+C gracefully.
         print()
         sys.exit(0)
 
@@ -241,7 +231,7 @@ def main():
     chain.process_source()
     
     if args.show_table:
-        FormatPrinter({float: "%.2f"}).pprint(chain.transition_dict)
+        pprint.pprint(chain.transition_dict)
         sys.exit(0)
     else:
         result = chain.generate(args.initial_string, args.num_words)
